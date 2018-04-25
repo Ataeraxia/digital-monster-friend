@@ -1,6 +1,7 @@
 # cSpell:ignore pygame, rect KEYUP
 import pygame
 import random
+import math
 
 pygame.init()
 
@@ -18,6 +19,16 @@ lead_y = 175
 lead_x_change = 10
 lead_y_change = 0
 squash = -50
+
+isDead = False
+
+millsInSec = 1000
+millsInMinute = millsInSec * 60
+minLifeMinutes = millsInMinute*60
+maxLifeMinutes = minLifeMinutes*5
+
+deathTime = random.randrange(minLifeMinutes, maxLifeMinutes)
+print(deathTime)
 
 clock = pygame.time.Clock()
 
@@ -39,37 +50,50 @@ while not gameExit:
         #         lead_y_change = 10
         #         lead_x_change = 0
 
-    if lead_x > 350:
-        lead_x_change = -10
-    elif lead_x < 0:
-        lead_x_change = 10
-    if lead_y > 300:
-        lead_y_change = -10
-    elif lead_y < 0:
-        lead_y_change = 10
+    # IS IT DEAD?
+    if pygame.time.get_ticks() >= deathTime:
+        isDead = True
 
-    choiceList = [-10, 10]
+    if isDead:
+        screen.fill(red)
+        pygame.draw.circle(screen, white, [140, 140], 10)
+        pygame.draw.circle(screen, white, [240, 140], 10)
+        pygame.draw.arc(
+            screen, white, [125, 200, 150, 100], 0, math.pi, 4)
+        pygame.display.update()
 
-    if lead_x > 300:
-        choiceList = [-10, -10, 10]
-    elif lead_x < 100:
-        choiceList = [-10, 10, 10]
+    else:
+        if lead_x > 350:
+            lead_x_change = -10
+        elif lead_x < 0:
+            lead_x_change = 10
+        if lead_y > 300:
+            lead_y_change = -10
+        elif lead_y < 0:
+            lead_y_change = 10
 
-    lead_x_change = random.choice(choiceList)
+        choiceList = [-10, 10]
 
-    if squash == -50:
-        squash = -40
-    elif squash == -40:
-        squash = -50
+        if lead_x > 300:
+            choiceList = [-10, -10, 10]
+        elif lead_x < 100:
+            choiceList = [-10, 10, 10]
 
-    lead_x += lead_x_change
-    lead_y += lead_y_change
+        lead_x_change = random.choice(choiceList)
 
-    screen.fill(black)
-    pygame.draw.rect(screen, red, [lead_x, lead_y, 50, squash])  # x,y,w,h
-    pygame.display.update()
+        if squash == -50:
+            squash = -40
+        elif squash == -40:
+            squash = -50
 
-    clock.tick(2)
+        lead_x += lead_x_change
+        lead_y += lead_y_change
+
+        screen.fill(black)
+        pygame.draw.rect(screen, red, [lead_x, lead_y, 50, squash])  # x,y,w,h
+        pygame.display.update()
+
+        clock.tick(2)
 
 pygame.quit()
 quit()
